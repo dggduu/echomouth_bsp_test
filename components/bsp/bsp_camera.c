@@ -1,11 +1,9 @@
 #include "bsp_camera.h"
 #include "bsp_config.h"
-#include "bsp_i2c.h"
 #include "bsp_pca9539.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-
 
 static const char *TAG = "BSP_CAMERA";
 static bool s_initialized = false;
@@ -17,6 +15,7 @@ esp_err_t bsp_camera_init(uint32_t xclk_freq_hz, pixformat_t pixel_format,
     return ESP_OK;
   }
 
+  // 检查摄像头电源是否已开启
   bool powered;
   bsp_pca9539_get_pin_level(BSP_PIN_CAM_PWR, &powered);
   if (!powered) {
@@ -29,9 +28,9 @@ esp_err_t bsp_camera_init(uint32_t xclk_freq_hz, pixformat_t pixel_format,
       .pin_pwdn = BSP_CAM_PWDN,
       .pin_reset = BSP_CAM_RESET,
       .pin_xclk = BSP_CAM_MCLK,
-      .pin_sccb_sda = -1,
-      .pin_sccb_scl = -1,
-      .sccb_i2c_port = bsp_i2c_get_main_port(),
+      .pin_sccb_sda = BSP_I2C_MAIN_SDA, // 使用主 I2C 引脚
+      .pin_sccb_scl = BSP_I2C_MAIN_SCL,
+      .sccb_i2c_port = -1, // -1 表示使用上面指定的引脚自己初始化
 
       .pin_d7 = BSP_CAM_D7,
       .pin_d6 = BSP_CAM_D6,
@@ -62,13 +61,12 @@ esp_err_t bsp_camera_init(uint32_t xclk_freq_hz, pixformat_t pixel_format,
     return ret;
   }
 
+  // 获取传感器并限制帧大小
   sensor_t *s = esp_camera_sensor_get();
   if (s) {
-    framesize_t max_size = s->status.max_resolution;
-    if (frame_size > max_size) {
-      ESP_LOGW(TAG, "Requested size %d exceeds max, set to %d", frame_size,
-               max_size);
-      s->set_framesize(s, max_size);
+    // 如果请求的帧大小超出传感器支持，降级
+    if (frame_size > s->status.framesize) {
+      s->set_framesize(s, s->status.framesize);
     }
   }
 

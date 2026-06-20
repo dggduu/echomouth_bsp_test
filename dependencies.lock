@@ -1,22 +1,4 @@
 dependencies:
-  espressif/bq27220:
-    component_hash: df0a38fae582b535f9e0cc41b811f49ce5dc2e0c70009605c4d57c159efb8f2d
-    dependencies:
-    - name: espressif/cmake_utilities
-      registry_url: https://components.espressif.com
-      require: private
-      version: 0.*
-    - name: espressif/i2c_bus
-      registry_url: https://components.espressif.com
-      require: public
-      version: 1.4.*
-    - name: idf
-      require: private
-      version: '>=4.4'
-    source:
-      registry_url: https://components.espressif.com/
-      type: service
-    version: 0.1.1
   espressif/cmake_utilities:
     component_hash: 351350613ceafba240b761b4ea991e0f231ac7a9f59a9ee901f751bddc0bb18f
     dependencies:
@@ -99,31 +81,16 @@ dependencies:
       registry_url: https://components.espressif.com/
       type: service
     version: 1.1.1~1
-  espressif/i2c_bus:
-    component_hash: fe8f85b3859544fabb960d7bcec24278cd3c88e3f1777e8a2075b0aca202fd9f
-    dependencies:
-    - name: espressif/cmake_utilities
-      registry_url: https://components.espressif.com
-      require: private
-      version: 0.*
-    - name: idf
-      require: private
-      version: '>=4.0'
-    source:
-      registry_url: https://components.espressif.com
-      type: service
-    version: 1.4.2
   idf:
     source:
       type: idf
     version: 5.5.4
 direct_dependencies:
-- espressif/bq27220
 - espressif/esp32-camera
 - espressif/esp_codec_dev
 - espressif/esp_lcd_st77916
 - espressif/esp_lcd_touch_cst816s
 - idf
-manifest_hash: 690ad61b9d4ef401e7a5fd990583a864ab60a139c79dfe959d61313da66d035e
+manifest_hash: 3ebd390163f830aa5b368cc70c58fa84a4b8c5ad17cd14c14477ece5bfecf4c6
 target: esp32s3
 version: 2.0.0

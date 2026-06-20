@@ -10,7 +10,6 @@ idf_component_register(
     INCLUDE_DIRS "include"
     REQUIRES
         driver
-        i2c_bus
         esp_lcd_st77916
         esp_lcd_touch_cst816s
         esp_codec_dev

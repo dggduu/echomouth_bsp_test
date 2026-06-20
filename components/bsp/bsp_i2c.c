@@ -8,7 +8,7 @@ static const char *TAG = "BSP_I2C";
 static i2c_master_bus_handle_t s_main_bus = NULL;
 static i2c_master_bus_handle_t s_bat_bus = NULL;
 
-// 设备句柄缓存（优化性能，避免频繁 add/remove）
+// 设备缓存
 typedef struct {
   i2c_master_dev_handle_t dev;
   uint8_t addr;
@@ -21,7 +21,6 @@ static esp_err_t get_device(i2c_master_bus_handle_t bus, dev_cache_t *cache,
   if (cache->dev != NULL && cache->addr == addr_7bit) {
     return ESP_OK;
   }
-  // 移除旧设备
   if (cache->dev != NULL) {
     i2c_master_bus_rm_device(cache->dev);
     cache->dev = NULL;
@@ -49,7 +48,7 @@ esp_err_t bsp_i2c_init_main(void) {
   };
   esp_err_t ret = i2c_new_master_bus(&bus_cfg, &s_main_bus);
   if (ret != ESP_OK) {
-    ESP_LOGE(TAG, "Main I2C init failed: %s", esp_err_to_name(ret));
+    ESP_LOGE(TAG, "Main I2C init failed");
   } else {
     ESP_LOGI(TAG, "Main I2C initialized");
   }
@@ -67,7 +66,7 @@ esp_err_t bsp_i2c_init_bat(void) {
   };
   esp_err_t ret = i2c_new_master_bus(&bus_cfg, &s_bat_bus);
   if (ret != ESP_OK) {
-    ESP_LOGE(TAG, "Battery I2C init failed: %s", esp_err_to_name(ret));
+    ESP_LOGE(TAG, "Battery I2C init failed");
   } else {
     ESP_LOGI(TAG, "Battery I2C initialized");
   }
@@ -77,7 +76,7 @@ esp_err_t bsp_i2c_init_bat(void) {
 i2c_master_bus_handle_t bsp_i2c_get_main_handle(void) { return s_main_bus; }
 i2c_master_bus_handle_t bsp_i2c_get_bat_handle(void) { return s_bat_bus; }
 
-// === 主总线读写 ===
+// 主总线读写
 esp_err_t bsp_i2c_write_main(uint8_t addr_7bit, const uint8_t *data, size_t len,
                              int timeout_ms) {
   if (s_main_bus == NULL)
@@ -116,7 +115,7 @@ esp_err_t bsp_i2c_write_read_main(uint8_t addr_7bit, const uint8_t *write_data,
                                      pdMS_TO_TICKS(timeout_ms));
 }
 
-// === 电池总线读写 ===
+// 电池总线读写（新版）
 esp_err_t bsp_i2c_write_bat(uint8_t addr_7bit, const uint8_t *data, size_t len,
                             int timeout_ms) {
   if (s_bat_bus == NULL)
@@ -156,27 +155,19 @@ esp_err_t bsp_i2c_write_read_bat(uint8_t addr_7bit, const uint8_t *write_data,
 }
 
 void bsp_i2c_scan(i2c_master_bus_handle_t bus) {
-  if (bus == NULL)
-    return;
-  ESP_LOGI(TAG, "Scanning I2C bus...");
-  int found = 0;
-  for (uint8_t addr = 1; addr < 127; addr++) {
-    i2c_device_config_t dev_cfg = {
-        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address = addr,
-        .scl_speed_hz = 100000,
-    };
-    i2c_master_dev_handle_t probe;
-    esp_err_t ret = i2c_master_bus_add_device(bus, &dev_cfg, &probe);
+  ESP_LOGI(TAG, "Scanning I2C...");
+
+  int count = 0;
+
+  for (uint8_t addr = 1; addr < 0x7F; addr++) {
+
+    esp_err_t ret = i2c_master_probe(bus, addr, 50);
+
     if (ret == ESP_OK) {
-      ret = i2c_master_transmit(probe, NULL, 0, pdMS_TO_TICKS(100));
-      if (ret == ESP_OK) {
-        ESP_LOGI(TAG, "  Found device at 0x%02X", addr);
-        found++;
-      }
-      i2c_master_bus_rm_device(probe);
+      printf("Found: 0x%02X\n", addr);
+      count++;
     }
-    vTaskDelay(pdMS_TO_TICKS(2));
   }
-  ESP_LOGI(TAG, "Scan complete, found %d devices", found);
+
+  printf("Total=%d\n", count);
 }

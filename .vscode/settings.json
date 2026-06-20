@@ -17,5 +17,6 @@
     "--query-driver=**",
     "--compile-commands-dir=e:\\tmp\\esp-prj\\00-test-audio-board\\build"
   ],
-  "idf.flashType": "UART"
+  "idf.flashType": "UART",
+  "idf.port": "/dev/ttyACM0"
 }

@@ -44,10 +44,14 @@ static void init_i2s(void) {
 // ===== 板级初始化 =====
 esp_err_t bsp_board_init(void) {
   ESP_ERROR_CHECK(bsp_i2c_init_main());
-  ESP_ERROR_CHECK(bsp_i2c_init_bat());
+  ESP_ERROR_CHECK(bsp_i2c_init_bat()); // 新版电池总线
   ESP_ERROR_CHECK(bsp_pca9539_init(BSP_PCA9539_ADDR));
+  ESP_ERROR_CHECK(bsp_board_power_off_all());
   init_i2s();
-  bsp_battery_init(); // 尝试初始化，忽略错误
+  bsp_battery_init(); // 尝试初始化
+  // bsp_audio_power_on();
+  // vTaskDelay(pdMS_TO_TICKS(1000));
+  // bsp_i2c_scan(bsp_i2c_get_main_handle());
   ESP_LOGI(TAG, "Board initialized");
   return ESP_OK;
 }
@@ -56,7 +60,7 @@ esp_err_t bsp_board_init(void) {
 esp_err_t bsp_board_audio_power_up(void) {
   esp_err_t ret = bsp_audio_power_on();
   if (ret == ESP_OK) {
-    vTaskDelay(pdMS_TO_TICKS(100));
+    vTaskDelay(pdMS_TO_TICKS(300));
     // 初始化音频编解码器，传入 I2S 句柄
     ret = bsp_audio_init(s_tx_handle, s_rx_handle);
   }
@@ -96,11 +100,23 @@ esp_err_t bsp_board_camera_power_up(void) {
 esp_err_t bsp_board_camera_power_down(void) { return bsp_cam_power_off(); }
 
 // ===== 关闭所有电源 =====
-esp_err_t bsp_board_power_off_all(void) {
+esp_err_t bsp_board_power_off_and_deinit_all(void) {
   bsp_audio_power_off();
   bsp_screen_power_off();
   bsp_cam_power_off();
   bsp_pa_power_off();
+  return ESP_OK;
+}
+
+/**
+ * @brief 拉低所有的引脚
+ * @note 默认为高阻，需要给一个显性低电平
+ * @return esp_err_t
+ */
+esp_err_t bsp_board_power_off_all(void) {
+  bsp_cam_power_off();
+  bsp_audio_power_off();
+  bsp_screen_power_off();
   return ESP_OK;
 }
 

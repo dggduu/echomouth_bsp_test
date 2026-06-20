@@ -6,7 +6,6 @@
 #include "driver/i2s_types.h"
 #include "driver/spi_common.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -67,8 +66,8 @@ extern "C" {
 
 // ===== 设备 7-bit I2C 地址 =====
 #define BSP_PCA9539_ADDR 0x74
-#define BSP_ES8311_ADDR 0x18
-#define BSP_ES7210_ADDR 0x40
+#define BSP_ES8311_ADDR (0x18 << 1)
+#define BSP_ES7210_ADDR (0x40 << 1)
 #define BSP_CST816S_ADDR 0x74
 #define BSP_BQ27220_ADDR 0x55
 

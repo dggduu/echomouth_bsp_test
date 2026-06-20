@@ -60,7 +60,7 @@ esp_err_t bsp_audio_init(void *tx_handle, void *rx_handle) {
       .ctrl_if = ctrl_if_8311,
       .gpio_if = gpio_if,
       .pa_pin = -1, // PA 由 PCA9539 控制
-      .use_mclk = true,
+      .use_mclk = false,
   };
   const audio_codec_if_t *out_codec_if = es8311_codec_new(&es8311_cfg);
   if (out_codec_if == NULL) {
@@ -147,7 +147,7 @@ esp_err_t bsp_audio_init(void *tx_handle, void *rx_handle) {
 
   // 设置默认音量/增益
   esp_codec_dev_set_out_vol(s_play_dev, 60);
-  esp_codec_dev_set_in_gain(s_record_dev, 30.0f);
+  esp_codec_dev_set_in_gain(s_record_dev, 37.5f);
 
   ESP_LOGI(TAG, "Audio initialized: ES8311 play, ES7210 record");
   return ESP_OK;

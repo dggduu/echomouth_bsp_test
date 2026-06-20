@@ -4,7 +4,6 @@
 #include "driver/i2s_std.h"
 #include "esp_err.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,9 +29,16 @@ esp_err_t bsp_board_screen_power_up(void);
 esp_err_t bsp_board_camera_power_up(void);
 
 /**
- * @brief 关闭所有电源
+ * @brief 关闭所有电源并外设解初始化
  */
 esp_err_t bsp_board_power_off_all(void);
+
+/**
+ * @brief 关闭所有电源
+ *
+ * @return esp_err_t
+ */
+esp_err_t bsp_board_power_off_and_deinit_all(void);
 
 /**
  * @brief 获取 I2S 发送句柄（播放）

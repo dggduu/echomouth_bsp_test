@@ -16,10 +16,9 @@ void app_main(void) {
   ESP_ERROR_CHECK(bsp_board_init());
 
   // 2. 音频
-  ESP_ERROR_CHECK(bsp_board_power_off_all());
   ESP_ERROR_CHECK(bsp_board_audio_power_up());
-  ESP_ERROR_CHECK(bsp_board_screen_power_up());
-  ESP_ERROR_CHECK(bsp_board_camera_power_up());
+  // ESP_ERROR_CHECK(bsp_board_screen_power_up());
+  // ESP_ERROR_CHECK(bsp_board_camera_power_up());
   ESP_LOGI(TAG, "Audio ready");
 
   // // 3. 屏幕
@@ -42,17 +41,15 @@ void app_main(void) {
   // }
 
   // 6. 录音测试
-  // int16_t pcm[512];
+  int16_t pcm[512];
   while (1) {
-    // esp_err_t ret = bsp_audio_record((uint8_t *)pcm, sizeof(pcm));
-    // if (ret == ESP_OK) {
-    //   int max_amp = 0;
-    //   for (int i = 0; i < 256; i++) {
-    //     if (abs(pcm[i]) > max_amp)
-    //       max_amp = abs(pcm[i]);
-    //   }
-    //   ESP_LOGI(TAG, "Audio peak: %d", max_amp);
-    // }
+    esp_err_t ret = bsp_audio_record((uint8_t *)pcm, sizeof(pcm));
+    if (ret == ESP_OK) {
+      for (int i = 0; i < 32; i++) {
+        printf("%6d ", pcm[i]);
+      }
+      printf("\n");
+    }
     vTaskDelay(pdMS_TO_TICKS(100));
   }
 }

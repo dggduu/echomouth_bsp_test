@@ -3,6 +3,7 @@
 
 #include "driver/gpio.h"
 #include "driver/i2c.h"
+#include "driver/i2s_types.h"
 #include "driver/spi_common.h"
 
 

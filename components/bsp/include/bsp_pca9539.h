@@ -15,8 +15,8 @@ extern "C" {
 #define BSP_PIN_AUDIO_PWR 4
 #define BSP_PIN_CAM_PWR 5
 
-#define bsp_pa_power_enable() bsp_pca9539_set_pin_level(BSP_PIN_PA_CTRL, true)
-#define bsp_pa_power_disable() bsp_pca9539_set_pin_level(BSP_PIN_PA_CTRL, false)
+#define bsp_pa_power_on() bsp_pca9539_set_pin_level(BSP_PIN_PA_CTRL, true)
+#define bsp_pa_power_off() bsp_pca9539_set_pin_level(BSP_PIN_PA_CTRL, false)
 #define bsp_lcd_reset_high() bsp_pca9539_set_pin_level(BSP_PIN_LCD_RST, true)
 #define bsp_lcd_reset_low() bsp_pca9539_set_pin_level(BSP_PIN_LCD_RST, false)
 #define bsp_screen_power_on()                                                  \

@@ -1,13 +1,8 @@
 #include "bsp_audio.h"
-#include "audio_codec_ctrl_if.h"
-#include "audio_codec_data_if.h"
-#include "audio_codec_gpio_if.h"
-#include "audio_codec_if.h"
 #include "bsp_config.h"
 #include "bsp_i2c.h"
-// #include "es7210_adc.h" // 正确头文件
-// #include "es8311_codec.h"
 #include "esp_codec_dev.h"
+#include "esp_codec_dev_defaults.h"
 #include "esp_log.h"
 
 static const char *TAG = "BSP_AUDIO";
